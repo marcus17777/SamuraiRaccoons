@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:testtest"
+        xmlns:myControls="clr-namespace:testtest"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="400">
     <Grid HorizontalAlignment="Left" Height="94" Margin="10,10,0,0" VerticalAlignment="Top" Width="380">
@@ -15,8 +15,10 @@
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="148,172,0,-94" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="62" Margin="8,200,-28443563854,-168" VerticalAlignment="Top" Width="200" ItemsSource="{Binding taskList}">
             <ListView.ItemTemplate>
-                <DataTemplate DataType="local:Tasks">
-                    <TextBlock Text="{Binding taskName}"></TextBlock>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="Hello"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.View>
