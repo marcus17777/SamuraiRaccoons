@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="UWP_slot1.App"
+    x:Class="slot1.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UWP_slot1"
+    xmlns:local="using:slot1"
     RequestedTheme="Light">
 
 </Application>
