@@ -35,6 +35,7 @@ namespace TalkToCorona
         private ResourceContext speechContext;
         private ResourceMap speechResourceMap;
         private SpeechSynthesizer synthesizer;
+        private Boolean talk = true;
 
         public MainPage()
         {
@@ -61,34 +62,7 @@ namespace TalkToCorona
 
                 await InitializeRecognizer(SpeechRecognizer.SystemSpeechLanguage);
 
-                try
-                {
-                    lause = "Hello, I'm Cortana. I'm you private English teacher. After the peeeeeeeeeee-eeeeeeeeeee-eeeeeeeeee-eeeeeep I'm going to say a phrase. You just have to press the button and repeat it to me loud and clear.   peeeeeeeee-eeeeee-eeeeeee-eeeeeeee-eeeeeeeeep  ,,,  The Night of the Living Developers";
-                    SpeechSynthesisStream synthesisStream = await synthesizer.SynthesizeTextToStreamAsync(lause);
-                    // Set the source and start playing the synthesized audio stream.
-                    media.AutoPlay = true;
-                    media.SetSource(synthesisStream, synthesisStream.ContentType);
-                    media.Play();
-                    // Create a stream from the text. This will be played using a media element.
-                    lause = "The Night of the Living Developers";
-                   
-
-                }
-                catch (System.IO.FileNotFoundException)
-                {
-                    // If media player components are unavailable, (eg, using a N SKU of windows), we won't
-                    // be able to start media playback. Handle this gracefully
-                    var messageDialog = new Windows.UI.Popups.MessageDialog("Media player components unavailable");
-                    await messageDialog.ShowAsync();
-                }
-                catch (Exception)
-                {
-                    // If the text is unable to be synthesized, throw an error message to the user.
-                    media.AutoPlay = false;
-                    var messageDialog = new Windows.UI.Popups.MessageDialog("Unable to synthesize text");
-                    await messageDialog.ShowAsync();
-                }
-
+                await say_things("Hello, I'm Cortana.");
 
             }
             else
@@ -96,6 +70,34 @@ namespace TalkToCorona
                 resultTextBlock.Visibility = Visibility.Visible;
                 resultTextBlock.Text = "Permission to access capture resources was not given by the user; please set the application setting in Settings->Privacy->Microphone.";
                 btnRecognizeWithoutUI.IsEnabled = false;
+            }
+        }
+
+        private async Task say_things(String sentence)
+        {
+            try
+            {
+                SpeechSynthesisStream synthesisStream = await synthesizer.SynthesizeTextToStreamAsync(sentence);
+                // Set the source and start playing the synthesized audio stream.
+                media.AutoPlay = true;
+                media.SetSource(synthesisStream, synthesisStream.ContentType);
+                media.Play();
+                // Create a stream from the text. This will be played using a media element.
+
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                // If media player components are unavailable, (eg, using a N SKU of windows), we won't
+                // be able to start media playback. Handle this gracefully
+                var messageDialog = new Windows.UI.Popups.MessageDialog("Media player components unavailable");
+                await messageDialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // If the text is unable to be synthesized, throw an error message to the user.
+                media.AutoPlay = false;
+                var messageDialog = new Windows.UI.Popups.MessageDialog("Unable to synthesize text");
+                await messageDialog.ShowAsync();
             }
         }
 
@@ -190,7 +192,7 @@ namespace TalkToCorona
         /// </summary>
         /// <param name="sender">Button that triggered this event</param>
         /// <param name="e">State information about the routed event</param>
-        private async void RecognizeWithoutUIWebSearchGrammar_Click(object sender, RoutedEventArgs e)
+        private async void RecognizeWithoutUIWebSearchGrammar_Click(String sentence)
         {
             heardYouSayTextBlock.Visibility = resultTextBlock.Visibility = Visibility.Collapsed;
 
@@ -211,27 +213,15 @@ namespace TalkToCorona
                 {
                     heardYouSayTextBlock.Visibility = resultTextBlock.Visibility = Visibility.Visible;
                     //resultTextBlock.Text = speechRecognitionResult.Text;
-                    if (speechRecognitionResult.Text.ToLower().Equals(lause.ToLower()))
+                    if (speechRecognitionResult.Text.ToLower().Equals(sentence.ToLower()))
                     {
                         resultTextBlock.Text = "Success" + ", you said: " + speechRecognitionResult.Text;
-                        lause = "Success! Great Work";
-                        SpeechSynthesisStream synthesisStream2 = await synthesizer.SynthesizeTextToStreamAsync(lause);
-                        // Set the source and start playing the synthesized audio stream.
-                        media.AutoPlay = true;
-                        media.SetSource(synthesisStream2, synthesisStream2.ContentType);
-                        media.Play();
-                        lause = "The Night of the Living Developers";
+                        say_things("Success! Great Work");
                     }
                     else
                     {
                         resultTextBlock.Text = "Sorry you FAILED. You said : " + speechRecognitionResult.Text;
-                        lause = "FAIL! Press the button again and try saying the phrase again";
-                        SpeechSynthesisStream synthesisStream3 = await synthesizer.SynthesizeTextToStreamAsync(lause);
-                        // Set the source and start playing the synthesized audio stream.
-                        media.AutoPlay = true;
-                        media.SetSource(synthesisStream3, synthesisStream3.ContentType);
-                        media.Play();
-                        lause = "The Night of the Living Developers";
+                        say_things("FAIL! Press the button again and try saying the phrase again");
                         btnRecognizeWithoutUI.IsEnabled = true;
                     }
                 }
@@ -274,6 +264,22 @@ namespace TalkToCorona
         /// </summary>
         /// <param name="sender">Ignored</param>
         /// <param name="args">Ignored</param>
+        /// 
+
+        private void Button_command(object sender, RoutedEventArgs e)
+        {
+            String sentence = "Hello";
+            if (talk)
+            {   
+
+                say_things(sentence);
+                talk = false;
+            } else if (!talk)
+            {
+                RecognizeWithoutUIWebSearchGrammar_Click(sentence);
+                talk = true;
+            }
+        }
         private async void openPrivacySettings_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-speechtyping"));

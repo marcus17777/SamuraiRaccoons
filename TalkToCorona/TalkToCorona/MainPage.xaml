@@ -10,7 +10,7 @@
         <ScrollViewer Background="#7BAABA" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="btnRecognizeWithoutUI" Background="#24669C" Click="RecognizeWithoutUIWebSearchGrammar_Click" IsEnabled="False" Margin="150,30,10,10">
+                    <Button x:Name="btnRecognizeWithoutUI" Background="#24669C" Click="Button_command" IsEnabled="False" Margin="150,30,10,10">
                         <StackPanel Orientation="Horizontal">
                             <SymbolIcon Symbol="Microphone" Foreground="#0A2B45"/>
                             <TextBlock x:Name="listenWithoutUIButtonText" Text="Click me" Foreground="#0A2B45" />
@@ -25,4 +25,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Page>x
+</Page>
