@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Globalization;
@@ -28,7 +29,6 @@ namespace TalkToCorona
     {
         private static uint HResultPrivacyStatementDeclined = 0x80045509;
 
-        private string lause;
         private SpeechRecognizer speechRecognizer;
         private CoreDispatcher dispatcher;
         private IAsyncOperation<SpeechRecognitionResult> recognitionOperation;
@@ -36,10 +36,73 @@ namespace TalkToCorona
         private ResourceMap speechResourceMap;
         private SpeechSynthesizer synthesizer;
         private Boolean talk = true;
+        private String current_sentence;
+        private List<String> manners;
+        private List<String> zombies;
+        private List<List<String>> sentence_list = new List<List<String>>();
+        private int sentence_list_index = 0;
+        private int sentence_index = 0;
+
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            manners = new List<string>();
+            manners.Add("Goodbye");
+            manners.Add("Hello");
+            manners.Add("Thank you");
+            manners.Add("How are you");
+            manners.Add("Excuse me");
+            manners.Add("I am sorry");
+            manners.Add("Good afternoon");
+            manners.Add("You are welcome");
+            manners.Add("Please");
+            manners.Add("Bless you");
+            manners.Add("My condolences");
+            manners.Add("Pardon");
+            manners.Add("Good morning");
+            manners.Add("How is it going");
+            manners.Add("Greetings");
+
+            zombies = new List<string>();
+            zombies.Add("Zombie");
+            zombies.Add("Fortress");
+            zombies.Add("Hammer");
+            zombies.Add("Dead");
+            zombies.Add("Brutal");
+            zombies.Add("Cemetery");
+            zombies.Add("Corps");
+            zombies.Add("Freakish");
+            zombies.Add("Creepy");
+            zombies.Add("Curse");
+            zombies.Add("Dying");
+            zombies.Add("Graveyard");
+            zombies.Add("Horrible");
+            zombies.Add("Night of the Living Dead");
+            zombies.Add("Nightmare");
+            zombies.Add("Paleness");
+            zombies.Add("Monster");
+            zombies.Add("Moon");
+            zombies.Add("Obscure");
+            zombies.Add("Yelling");
+            zombies.Add("Screaming");
+            zombies.Add("Superstition");
+            zombies.Add("Wicked");
+            zombies.Add("Walking corpse");
+            zombies.Add("Undead");
+            zombies.Add("Transformation");
+            zombies.Add("Petrify");
+            zombies.Add("Disturbing");
+            zombies.Add("Lurkers");
+            zombies.Add("Creepy Crawlies");
+            zombies.Add("Crimson Heads");
+            zombies.Add("Necrotics");
+            zombies.Add("The Walking Dead");
+
+            sentence_list.Add(manners);
+            sentence_list.Add(zombies);
+
             synthesizer = new SpeechSynthesizer();
         }
 
@@ -62,7 +125,7 @@ namespace TalkToCorona
 
                 await InitializeRecognizer(SpeechRecognizer.SystemSpeechLanguage);
 
-                await say_things("Hello, I'm Cortana.");
+                await say_things("Hello, I'm Corona, your personal english teacher. I can help you learn pronunciating different sentences.");
 
             }
             else
@@ -192,9 +255,8 @@ namespace TalkToCorona
         /// </summary>
         /// <param name="sender">Button that triggered this event</param>
         /// <param name="e">State information about the routed event</param>
-        private async void RecognizeWithoutUIWebSearchGrammar_Click(String sentence)
+        private async Task RecognizeWithoutUIWebSearchGrammar_Click(String sentence)
         {
-            heardYouSayTextBlock.Visibility = resultTextBlock.Visibility = Visibility.Collapsed;
 
             // Disable the UI while recognition is occurring, and provide feedback to the user about current state.
             btnRecognizeWithoutUI.IsEnabled = false;
@@ -211,17 +273,25 @@ namespace TalkToCorona
                 // If successful, display the recognition result.
                 if (speechRecognitionResult.Status == SpeechRecognitionResultStatus.Success)
                 {
-                    heardYouSayTextBlock.Visibility = resultTextBlock.Visibility = Visibility.Visible;
                     //resultTextBlock.Text = speechRecognitionResult.Text;
                     if (speechRecognitionResult.Text.ToLower().Equals(sentence.ToLower()))
                     {
+                        resultTextBlock.Visibility = Visibility.Visible;
                         resultTextBlock.Text = "Success" + ", you said: " + speechRecognitionResult.Text;
                         say_things("Success! Great Work");
+                    } else if (speechRecognitionResult.Text.ToLower().Equals("change topic"))
+                    {
+                        if (sentence_list_index > sentence_list.Capacity)
+                            sentence_list_index = 0;
+                        else
+                            sentence_list_index += 1;
+                        sentence_index = 0;
+                        say_things("Topic changed!");
                     }
                     else
                     {
                         resultTextBlock.Text = "Sorry you FAILED. You said : " + speechRecognitionResult.Text;
-                        say_things("FAIL! Press the button again and try saying the phrase again");
+                        say_things("FAIL! You said " + speechRecognitionResult.Text + ". Press the button again and try saying the phrase again");
                         btnRecognizeWithoutUI.IsEnabled = true;
                     }
                 }
@@ -254,7 +324,6 @@ namespace TalkToCorona
             }
 
             // Reset UI state.
-            listenWithoutUIButtonText.Text = " without UI";
             btnRecognizeWithoutUI.IsEnabled = true;
         }
 
@@ -266,23 +335,35 @@ namespace TalkToCorona
         /// <param name="args">Ignored</param>
         /// 
 
-        private void Button_command(object sender, RoutedEventArgs e)
+        private async void Button_command(object sender, RoutedEventArgs e)
         {
-            String sentence = "Hello";
+            
             if (talk)
-            {   
+            {
+                current_sentence = sentence_list[sentence_list_index][sentence_index];
+                if (sentence_index > sentence_list[sentence_list_index].Capacity)
+                    sentence_index = 0;
+                else
+                    sentence_index += 1;
 
-                say_things(sentence);
+                say_things(current_sentence);
                 talk = false;
+                listenWithoutUIButtonText.Text = " Record!";
             } else if (!talk)
             {
-                RecognizeWithoutUIWebSearchGrammar_Click(sentence);
+                await RecognizeWithoutUIWebSearchGrammar_Click(current_sentence);
+                listenWithoutUIButtonText.Text = " Say another word.";
                 talk = true;
             }
         }
         private async void openPrivacySettings_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-speechtyping"));
+        }
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+
         }
     }
 }

@@ -6,23 +6,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Grid MaxHeight="350" MinHeight="350" MinWidth="400" MaxWidth="400" Height="350" Width="400" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ScrollViewer Background="#7BAABA" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="btnRecognizeWithoutUI" Background="#24669C" Click="Button_command" IsEnabled="False" Margin="150,30,10,10">
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="Microphone" Foreground="#0A2B45"/>
-                            <TextBlock x:Name="listenWithoutUIButtonText" Text="Click me" Foreground="#0A2B45" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-                <MediaElement x:Name="media" AutoPlay="False"/>
-                <TextBlock Margin="20,30,20,20" Text="Tap the microphone and speak. This example uses a predefined web search grammar constraint, so you can speak web search keywords." TextWrapping="WrapWholeWords" Style="{StaticResource BodyTextBlockStyle}"/>
-                <TextBlock x:Name="heardYouSayTextBlock" Margin="30,0,30,0" Text="" Visibility="Visible" TextWrapping="Wrap" Style="{StaticResource SubheaderTextBlockStyle}"/>
-                <TextBlock x:Name="resultTextBlock" Margin="30,-40,30,20" Visibility="Collapsed" TextWrapping="Wrap" Style="{StaticResource BodyTextBlockStyle}"/>
-                <TextBlock x:Name="hlOpenPrivacySettings" Visibility="Collapsed" TextWrapping="WrapWholeWords" Foreground="#BA090C" Margin="30,50,30,0">The speech recognition privacy settings have not been accepted. <Hyperlink Click="openPrivacySettings_Click">Open Privacy Settings</Hyperlink> to review the privacy policy and enable personalization.</TextBlock>
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Assets/back.jpg" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Button x:Name="btnRecognizeWithoutUI" Background="#FFA9BDCB" Click="Button_command" IsEnabled="False" Margin="0,-100,0,0" HorizontalAlignment="Center" FontSize="{ThemeResource TextStyleExtraLargeFontSize}" BorderBrush="#FF131313">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Microphone" Foreground="#0A2B45"/>
+                <TextBlock x:Name="listenWithoutUIButtonText" Text="Click me" Foreground="#0A2B45" />
             </StackPanel>
-        </ScrollViewer>
+        </Button>
+        <MediaElement x:Name="media" AutoPlay="False"/>
+        <TextBlock x:Name="resultTextBlock" Margin="0,-150,0,0" Text="" Visibility="Visible" TextWrapping="Wrap" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="{ThemeResource TextStyleExtraLargeFontSize}" Foreground="#FFC1CDD3" TextAlignment="Center"/>
+        <TextBlock x:Name="hlOpenPrivacySettings" Visibility="Collapsed" Foreground="#FFE60A0E" Margin="30,10,30,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Width="333" TextWrapping="WrapWholeWords" TextAlignment="Center">The speech recognition privacy settings have not been accepted. <Hyperlink Click="openPrivacySettings_Click">Open Privacy Settings</Hyperlink> to review the privacy policy and enable personalization.</TextBlock>
     </Grid>
 </Page>
