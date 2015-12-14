@@ -281,10 +281,8 @@ namespace TalkToCorona
                         say_things("Success! Great Work");
                     } else if (speechRecognitionResult.Text.ToLower().Equals("change topic"))
                     {
-                        if (sentence_list_index > sentence_list.Capacity)
-                            sentence_list_index = 0;
-                        else
-                            sentence_list_index += 1;
+                        // loops back around to first sentence list if reaches the end
+                        sentence_list_index = (sentence_list_index + 1) % sentence_list.Count;
                         sentence_index = 0;
                         say_things("Topic changed!");
                     }
@@ -340,15 +338,16 @@ namespace TalkToCorona
             
             if (talk)
             {
+                
+                
                 current_sentence = sentence_list[sentence_list_index][sentence_index];
-                if (sentence_index > sentence_list[sentence_list_index].Capacity)
-                    sentence_index = 0;
-                else
-                    sentence_index += 1;
-
                 say_things(current_sentence);
+
                 talk = false;
                 listenWithoutUIButtonText.Text = " Record!";
+
+                // iterate over indices; loops back around if reaches the end of word list
+                sentence_index = sentence_index + 1 % sentence_list[sentence_list_index].Count;
             } else if (!talk)
             {
                 await RecognizeWithoutUIWebSearchGrammar_Click(current_sentence);
